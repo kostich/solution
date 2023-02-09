@@ -1,2 +1,3 @@
 tmp/
 app/test-app
+app/service.proto
