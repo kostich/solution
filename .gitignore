@@ -1,3 +1,6 @@
 tmp/
 app/test-app
 app/service.proto
+infra/quick-auth.sh
+infra/.terraform*
+infra/terraform.tfstate
