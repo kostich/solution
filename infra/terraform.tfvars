@@ -13,6 +13,6 @@ app_name      = "test-app"
 desired_count = "2"
 cpu           = 256
 memory        = 512
-image         = "registry.hub.docker.com/kostic/test-app:04a3017"
+image         = "registry.hub.docker.com/kostic/test-app:1efd55a"
 http_port     = 80
 grpc_port     = 9000
