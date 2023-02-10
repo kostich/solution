@@ -11,6 +11,7 @@ var requestCount uint64
 
 func main() {
 	http.HandleFunc("/", writeHTTPResponse)
+	http.HandleFunc("/healthz", healthCheck)
 
 	httpPort, ok := os.LookupEnv("HTTP_PORT")
 	if !ok {
@@ -30,4 +31,8 @@ func writeHTTPResponse(w http.ResponseWriter, r *http.Request) {
 	hostname, _ := os.Hostname()
 	io.WriteString(w, fmt.Sprintf("Hello from %v! I've been visited %v times so far.\n", hostname, requestCount))
 	fmt.Printf("HTTP %v, client: %v, headers: %+v.\n", r.Method, r.RemoteAddr, r.Header)
+}
+
+func healthCheck(w http.ResponseWriter, r *http.Request) {
+	io.WriteString(w, "ok\n")
 }
