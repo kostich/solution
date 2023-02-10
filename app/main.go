@@ -27,6 +27,7 @@ func main() {
 
 func writeHTTPResponse(w http.ResponseWriter, r *http.Request) {
 	requestCount++
-	io.WriteString(w, fmt.Sprintf("Hello there! I've been visited %v times so far.\n", requestCount))
+	hostname, _ := os.Hostname()
+	io.WriteString(w, fmt.Sprintf("Hello from %v! I've been visited %v times so far.\n", hostname, requestCount))
 	fmt.Printf("HTTP %v, client: %v, headers: %+v.\n", r.Method, r.RemoteAddr, r.Header)
 }
