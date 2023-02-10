@@ -56,5 +56,9 @@ resource "aws_ecs_service" "service" {
     container_port   = var.http_port
   }
 
-  depends_on = [aws_lb_target_group.alb_tg, aws_lb_listener.alb_listener]
+  depends_on = [
+    aws_lb_target_group.alb_tg,
+    aws_lb_listener.alb_listener_http,
+    aws_lb_listener.alb_listener_grpc
+  ]
 }

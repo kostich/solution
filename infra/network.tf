@@ -167,9 +167,22 @@ resource "aws_lb_target_group" "alb_tg" {
   }
 }
 
-resource "aws_lb_listener" "alb_listener" {
+resource "aws_lb_listener" "alb_listener_http" {
   load_balancer_arn = aws_lb.alb.arn
-  port              = 80
+  port              = var.http_port
+  protocol          = "HTTP"
+
+  depends_on = [aws_lb_target_group.alb_tg]
+
+  default_action {
+    target_group_arn = aws_lb_target_group.alb_tg.arn
+    type             = "forward"
+  }
+}
+
+resource "aws_lb_listener" "alb_listener_grpc" {
+  load_balancer_arn = aws_lb.alb.arn
+  port              = var.grpc_port
   protocol          = "HTTP"
 
   depends_on = [aws_lb_target_group.alb_tg]
