@@ -8,8 +8,10 @@ import (
 )
 
 var requestCount uint64
+var hostname string
 
 func main() {
+	hostname, _ = os.Hostname()
 	http.HandleFunc("/", writeHTTPResponse)
 	http.HandleFunc("/healthz", healthCheck)
 
@@ -28,7 +30,7 @@ func main() {
 
 func writeHTTPResponse(w http.ResponseWriter, r *http.Request) {
 	requestCount++
-	hostname, _ := os.Hostname()
+
 	io.WriteString(w, fmt.Sprintf("Hello from %v! I've been visited %v times so far.\n", hostname, requestCount))
 	fmt.Printf("HTTP %v, client: %v, headers: %+v.\n", r.Method, r.RemoteAddr, r.Header)
 }
