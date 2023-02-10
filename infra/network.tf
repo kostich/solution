@@ -1,8 +1,7 @@
 # public subnet
 resource "aws_subnet" "public" {
-  vpc_id            = aws_vpc.solution_vpc.id
-  cidr_block        = var.public_cidr
-  availability_zone = "${var.region}a"
+  vpc_id     = aws_vpc.solution_vpc.id
+  cidr_block = var.public_cidr
 
   tags = {
     Name = "${var.environment}-public-subnet"
@@ -122,9 +121,8 @@ resource "aws_route_table_association" "rt_assoc_public" {
 }
 
 resource "aws_subnet" "app" {
-  vpc_id            = aws_vpc.solution_vpc.id
-  cidr_block        = var.app_cidr
-  availability_zone = "${var.region}b"
+  vpc_id     = aws_vpc.solution_vpc.id
+  cidr_block = var.app_cidr
 
   tags = {
     Name = "${var.environment}-app-subnet"
