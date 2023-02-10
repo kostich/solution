@@ -1,10 +1,21 @@
 # public subnet
-resource "aws_subnet" "public" {
-  vpc_id     = aws_vpc.solution_vpc.id
-  cidr_block = var.public_cidr
+resource "aws_subnet" "public_primary" {
+  vpc_id            = aws_vpc.solution_vpc.id
+  cidr_block        = var.public_primary_cidr
+  availability_zone = "${var.region}a"
 
   tags = {
-    Name = "${var.environment}-public-subnet"
+    Name = "${var.environment}-public-primary-subnet"
+  }
+}
+
+resource "aws_subnet" "public_secondary" {
+  vpc_id            = aws_vpc.solution_vpc.id
+  cidr_block        = var.public_secondary_cidr
+  availability_zone = "${var.region}b"
+
+  tags = {
+    Name = "${var.environment}-public-secondary-subnet"
   }
 }
 
@@ -29,27 +40,51 @@ resource "aws_route_table" "public_rt" {
   }
 }
 
-resource "aws_route_table_association" "public_rt_assoc_public" {
-  subnet_id      = aws_subnet.public.id
+resource "aws_route_table_association" "public_primary_rt_assoc_public" {
+  subnet_id      = aws_subnet.public_primary.id
   route_table_id = aws_route_table.public_rt.id
 }
 
-resource "aws_eip" "eip" {
+resource "aws_route_table_association" "public_secondary_rt_assoc_public" {
+  subnet_id      = aws_subnet.public_secondary.id
+  route_table_id = aws_route_table.public_rt.id
+}
+
+resource "aws_eip" "primary-ngw-eip" {
   vpc = true
 
   tags = {
-    Name = "${var.environment}-public-ngw-eip"
+    Name = "${var.environment}-primary-ngw-eip"
   }
 }
 
-resource "aws_nat_gateway" "public_ngw" {
-  connectivity_type = "public"
-  subnet_id         = aws_subnet.public.id
-
-  allocation_id = aws_eip.eip.id
+resource "aws_eip" "secondary-ngw-eip" {
+  vpc = true
 
   tags = {
-    Name = "${var.environment}-public-ngw"
+    Name = "${var.environment}-secondary-ngw-eip"
+  }
+}
+
+resource "aws_nat_gateway" "primary_ngw" {
+  connectivity_type = "public"
+  subnet_id         = aws_subnet.public_primary.id
+
+  allocation_id = aws_eip.primary-ngw-eip.id
+
+  tags = {
+    Name = "${var.environment}-primary-ngw"
+  }
+}
+
+resource "aws_nat_gateway" "secondary_ngw" {
+  connectivity_type = "public"
+  subnet_id         = aws_subnet.public_secondary.id
+
+  allocation_id = aws_eip.secondary-ngw-eip.id
+
+  tags = {
+    Name = "${var.environment}-secondary-ngw"
   }
 }
 
@@ -102,41 +137,70 @@ resource "aws_security_group" "app_sg" {
   }
 }
 
-resource "aws_route_table" "app_rt" {
+resource "aws_route_table" "app_primary_rt" {
   vpc_id = aws_vpc.solution_vpc.id
 
   route {
     cidr_block = "0.0.0.0/0"
-    gateway_id = aws_nat_gateway.public_ngw.id
+    gateway_id = aws_nat_gateway.primary_ngw.id
   }
 
   tags = {
-    Name = "${var.environment}-app-subnet-route-table"
+    Name = "${var.environment}-app-primary-route-table"
   }
 }
 
-resource "aws_route_table_association" "rt_assoc_public" {
-  subnet_id      = aws_subnet.app.id
-  route_table_id = aws_route_table.app_rt.id
-}
+resource "aws_route_table" "app_secondary_rt" {
+  vpc_id = aws_vpc.solution_vpc.id
 
-resource "aws_subnet" "app" {
-  vpc_id     = aws_vpc.solution_vpc.id
-  cidr_block = var.app_cidr
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_nat_gateway.secondary_ngw.id
+  }
 
   tags = {
-    Name = "${var.environment}-app-subnet"
+    Name = "${var.environment}-app-secondary-route-table"
+  }
+}
+
+resource "aws_route_table_association" "app_primary_rt_assoc_public" {
+  subnet_id      = aws_subnet.app_primary.id
+  route_table_id = aws_route_table.app_primary_rt.id
+}
+
+resource "aws_route_table_association" "app_secondary_rt_assoc_public" {
+  subnet_id      = aws_subnet.app_secondary.id
+  route_table_id = aws_route_table.app_secondary_rt.id
+}
+
+resource "aws_subnet" "app_primary" {
+  vpc_id            = aws_vpc.solution_vpc.id
+  cidr_block        = var.app_primary_cidr
+  availability_zone = "${var.region}a"
+
+  tags = {
+    Name = "${var.environment}-app-primary-subnet"
+  }
+}
+
+resource "aws_subnet" "app_secondary" {
+  vpc_id            = aws_vpc.solution_vpc.id
+  cidr_block        = var.app_secondary_cidr
+  availability_zone = "${var.region}b"
+
+  tags = {
+    Name = "${var.environment}-app-secondary-subnet"
   }
 }
 
 # Load balancers
 resource "aws_lb" "alb" {
-  name               = "${var.environment}-alb"
-  internal           = false
-  load_balancer_type = "application"
-  security_groups    = [aws_security_group.app_sg.id]
-  subnets            = [aws_subnet.app.id, aws_subnet.public.id]
-
+  name                       = "${var.environment}-alb"
+  internal                   = false
+  load_balancer_type         = "application"
+  security_groups            = [aws_security_group.app_sg.id]
+  subnets                    = [aws_subnet.public_primary.id, aws_subnet.public_secondary.id]
+  preserve_host_header       = true
   enable_deletion_protection = false
 
   # TODO: make a bucket to store access logs

@@ -17,10 +17,16 @@ variable "vpc_cidr" {
   default     = "10.0.0.0/16"
 }
 
-variable "public_cidr" {
-  description = "CIDR used to route outside requests back to the app."
+variable "public_primary_cidr" {
+  description = "Primary subnet CIDR used to route outside requests back to the app."
   type        = string
 }
+
+variable "public_secondary_cidr" {
+  description = "Secondary subnet CIDR used to route outside requests back to the app."
+  type        = string
+}
+
 
 variable "mgmt_cidr" {
   description = "CIDR used for the VPN management nodes."
@@ -32,10 +38,16 @@ variable "data_cidr" {
   type        = string
 }
 
-variable "app_cidr" {
-  description = "CIDR used for the applications."
+variable "app_primary_cidr" {
+  description = "Primary subnet CIDR used for the applications."
   type        = string
 }
+
+variable "app_secondary_cidr" {
+  description = "Secondary subnet CIDR used for the applications."
+  type        = string
+}
+
 
 # application
 variable "app_name" {

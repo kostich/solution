@@ -2,11 +2,15 @@ region      = "eu-central-1"
 environment = "dev"
 
 # networking
-vpc_cidr    = "10.0.0.0/16"
-data_cidr   = "10.0.0.0/20"
-app_cidr    = "10.0.16.0/20"
-public_cidr = "10.0.253.0/24"
-mgmt_cidr   = "10.0.254.0/24"
+vpc_cidr = "10.0.0.0/16"
+
+# subnets
+data_cidr             = "10.0.0.0/20"
+app_primary_cidr      = "10.0.32.0/20"
+app_secondary_cidr    = "10.0.48.0/20"
+public_primary_cidr   = "10.0.250.0/24"
+public_secondary_cidr = "10.0.251.0/24"
+mgmt_cidr             = "10.0.254.0/24"
 
 # app
 app_name      = "test-app"
