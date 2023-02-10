@@ -159,6 +159,12 @@ resource "aws_lb_target_group" "alb_tg" {
   port        = 80
   protocol    = "HTTP"
   vpc_id      = aws_vpc.solution_vpc.id
+
+  health_check {
+    healthy_threshold   = 5
+    unhealthy_threshold = 2
+    path                = "/healthz"
+  }
 }
 
 resource "aws_lb_listener" "alb_listener" {

@@ -24,6 +24,7 @@ resource "aws_ecs_task_definition" "task_definition" {
           hostPort      = var.grpc_port
         }
       ]
+      healthCheckPath = "/healthz"
     }
   ])
   requires_compatibilities = ["FARGATE"]
