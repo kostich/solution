@@ -1,3 +1,22 @@
+resource "aws_security_group" "aurora_sg" {
+  name   = "${var.environment}-aurora-sg"
+  vpc_id = aws_vpc.solution_vpc.id
+
+  ingress {
+    cidr_blocks = ["0.0.0.0/0"]
+    from_port   = 5432
+    to_port     = 5432
+    protocol    = "tcp"
+  }
+
+  egress {
+    cidr_blocks = ["0.0.0.0/0"]
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+  }
+}
+
 resource "aws_db_subnet_group" "data_subnet_group" {
   name = "data-subnet-group"
   subnet_ids = [
@@ -18,6 +37,7 @@ resource "aws_rds_cluster" "aurora" {
   engine_version          = var.aurora_engine_version
   availability_zones      = ["${var.region}a", "${var.region}b", "${var.region}c"]
   db_subnet_group_name    = aws_db_subnet_group.data_subnet_group.name
+  vpc_security_group_ids  = [aws_security_group.aurora_sg.id]
   database_name           = "postgres"                         # TODO: make this configurable from terraform.tfvars
   master_username         = "postgres"                         # TODO: make this configurable from terraform.tfvars
   master_password         = "aehuV4raimiph0iewat3wo2cie9ooGho" # TODO: Refactor to retrieve from the Secrets Manager

@@ -73,6 +73,27 @@ variable "aurora_min_capacity" {
   type        = number
 }
 
+# vpn
+variable "instance_type" {
+  description = "EC2 VPN instance type."
+  type        = string
+}
+
+variable "instance_ami" {
+  description = "EC2 VPN instance AMI."
+  type        = string
+}
+
+variable "instance_user" {
+  description = "EC2 VPN instance SSH user."
+  type        = string
+}
+
+variable "instance_keys" {
+  description = "Public keys allowed to access the EC2 VPN instance (without sudo)."
+  type        = list(string)
+}
+
 # application
 variable "app_name" {
   description = "Name of the ECS application/task."

@@ -46,12 +46,21 @@ resource "aws_network_acl" "app" {
   }
 
   ingress {
-    protocol   = "all"
+    protocol   = "tcp"
     rule_no    = 100
     action     = "allow"
     cidr_block = "0.0.0.0/0"
-    from_port  = 0
-    to_port    = 0
+    from_port  = var.http_port
+    to_port    = var.http_port
+  }
+
+  ingress {
+    protocol   = "tcp"
+    rule_no    = 101
+    action     = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port  = var.grpc_port
+    to_port    = var.grpc_port
   }
 
   tags = {
@@ -60,8 +69,12 @@ resource "aws_network_acl" "app" {
 }
 
 resource "aws_network_acl" "data" {
-  vpc_id     = aws_vpc.solution_vpc.id
-  subnet_ids = [aws_subnet.data_primary.id, aws_subnet.data_secondary.id, aws_subnet.data_tertiary.id]
+  vpc_id = aws_vpc.solution_vpc.id
+  subnet_ids = [
+    aws_subnet.data_primary.id,
+    aws_subnet.data_secondary.id,
+    aws_subnet.data_tertiary.id
+  ]
 
   # PostgreSQL and Kafka connections to the app subnet
   egress {
@@ -82,15 +95,15 @@ resource "aws_network_acl" "data" {
     to_port    = 65535
   }
 
-  # VPN connections to mgmt
-  # egress {
-  #   protocol   = "udp"
-  #   rule_no    = 202
-  #   action     = "allow"
-  #   cidr_block = var.mgmt_cidr # TODO: specify the Wireguard EC2 instance IP here
-  #   from_port  = 1024
-  #   to_port    = 65535
-  # }
+  # outbound VPN connections
+  egress {
+    protocol   = "tcp"
+    rule_no    = 202
+    action     = "allow"
+    cidr_block = "${aws_instance.vpn_instance.private_ip}/32"
+    from_port  = 1024
+    to_port    = 65535
+  }
 
   # PostgreSQL and Kafka connections from the app subnet
   ingress {
@@ -129,15 +142,15 @@ resource "aws_network_acl" "data" {
     to_port    = 9092
   }
 
-  # VPN connections from mgmt (only Postgres!)
-  # ingress {
-  #   protocol   = "tcp"
-  #   rule_no    = 104
-  #   action     = "allow"
-  #   cidr_block = var.mgmt_cidr # TODO: specify the Wireguard EC2 instance IP here
-  #   from_port  = 5432
-  #   to_port    = 5432
-  # }
+  # inbound VPN connections
+  ingress {
+    protocol   = "tcp"
+    rule_no    = 104
+    action     = "allow"
+    cidr_block = "${aws_instance.vpn_instance.private_ip}/32"
+    from_port  = 5432
+    to_port    = 5432
+  }
 
   tags = {
     Name = "data"

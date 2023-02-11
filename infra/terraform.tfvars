@@ -21,6 +21,20 @@ aurora_engine_version = "13.8"
 aurora_min_capacity   = 0.5
 aurora_max_capacity   = 8
 
+# vpn
+instance_type = "t4g.micro"
+# TODO: use Terraform features to dynamically search for the instance_ami
+# instead of hard-coding it
+instance_ami  = "ami-01bba9fb00fc55866" # Amazon Linux 2 - kernel 5.10, SSD, aarch64
+instance_user = "vpn"
+
+# TODO: Note that this won't scale as the amount of users grows. Refactor it.
+# The keys are added to the EC2 instance userdata script but userdata is limited in size
+# and after we add a couple more users, we will reach that limit.
+instance_keys = [
+  "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAJ1r2jsQC+ceTWVje02CZMZDduDqKafCLdlbJxVzJrd marko@skynet",
+]
+
 # app
 app_name      = "test-app"
 desired_count = "2"
