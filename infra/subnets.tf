@@ -44,12 +44,33 @@ resource "aws_route_table_association" "public_secondary_rt_assoc_public" {
 
 # private subnets
 # data
-resource "aws_subnet" "data" {
-  vpc_id     = aws_vpc.solution_vpc.id
-  cidr_block = var.data_cidr
+resource "aws_subnet" "data_primary" {
+  vpc_id            = aws_vpc.solution_vpc.id
+  cidr_block        = var.data_primary_cidr
+  availability_zone = "${var.region}a"
 
   tags = {
-    Name = "${var.environment}-data-subnet"
+    Name = "${var.environment}-data-primary-subnet"
+  }
+}
+
+resource "aws_subnet" "data_secondary" {
+  vpc_id            = aws_vpc.solution_vpc.id
+  cidr_block        = var.data_secondary_cidr
+  availability_zone = "${var.region}b"
+
+  tags = {
+    Name = "${var.environment}-data-secondary-subnet"
+  }
+}
+
+resource "aws_subnet" "data_tertiary" {
+  vpc_id            = aws_vpc.solution_vpc.id
+  cidr_block        = var.data_tertiary_cidr
+  availability_zone = "${var.region}c"
+
+  tags = {
+    Name = "${var.environment}-data-tertiary-subnet"
   }
 }
 

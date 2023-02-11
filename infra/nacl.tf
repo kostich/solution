@@ -61,7 +61,7 @@ resource "aws_network_acl" "app" {
 
 resource "aws_network_acl" "data" {
   vpc_id     = aws_vpc.solution_vpc.id
-  subnet_ids = [aws_subnet.data.id]
+  subnet_ids = [aws_subnet.data_primary.id, aws_subnet.data_secondary.id, aws_subnet.data_tertiary.id]
 
   # PostgreSQL and Kafka connections to the app subnet
   egress {

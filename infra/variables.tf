@@ -27,8 +27,18 @@ variable "public_secondary_cidr" {
   type        = string
 }
 
-variable "data_cidr" {
-  description = "CIDR used for the data persistence service (Postgres, Kafka)."
+variable "data_primary_cidr" {
+  description = "Primary CIDR used for the data persistence service (Postgres, Kafka)."
+  type        = string
+}
+
+variable "data_secondary_cidr" {
+  description = "Secondary CIDR used for the data persistence service (Postgres, Kafka)."
+  type        = string
+}
+
+variable "data_tertiary_cidr" {
+  description = "Tertiary CIDR used for the data persistence service (Postgres, Kafka)."
   type        = string
 }
 
@@ -40,6 +50,27 @@ variable "app_primary_cidr" {
 variable "app_secondary_cidr" {
   description = "Secondary subnet CIDR used for the applications."
   type        = string
+}
+
+# database
+variable "aurora_engine_version" {
+  description = "Aurora Postgres Serverless V2 engine version."
+  type        = string
+}
+
+variable "aurora_instances" {
+  description = "Aurora Postgres Serverless V2 amount of instances in the cluster."
+  type        = number
+}
+
+variable "aurora_max_capacity" {
+  description = "Aurora Postgres Serverless V2 max amount of ACUs."
+  type        = number
+}
+
+variable "aurora_min_capacity" {
+  description = "Aurora Postgres Serverless V2 min amount of ACUs."
+  type        = number
 }
 
 # application
