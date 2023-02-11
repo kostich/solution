@@ -59,33 +59,6 @@ resource "aws_network_acl" "app" {
   }
 }
 
-resource "aws_network_acl" "mgmt" {
-  vpc_id     = aws_vpc.solution_vpc.id
-  subnet_ids = [aws_subnet.mgmt.id]
-
-  egress {
-    protocol   = "udp"
-    rule_no    = 200
-    action     = "allow"
-    cidr_block = var.data_cidr # we only need to access Postgres via the VPN
-    from_port  = 0
-    to_port    = 0
-  }
-
-  ingress {
-    protocol   = "udp"
-    rule_no    = 100
-    action     = "allow"
-    cidr_block = "0.0.0.0/0"
-    from_port  = 0
-    to_port    = 0
-  }
-
-  tags = {
-    Name = "mgmt"
-  }
-}
-
 resource "aws_network_acl" "data" {
   vpc_id     = aws_vpc.solution_vpc.id
   subnet_ids = [aws_subnet.data.id]
@@ -110,14 +83,14 @@ resource "aws_network_acl" "data" {
   }
 
   # VPN connections to mgmt
-  egress {
-    protocol   = "udp"
-    rule_no    = 202
-    action     = "allow"
-    cidr_block = var.mgmt_cidr
-    from_port  = 1024
-    to_port    = 65535
-  }
+  # egress {
+  #   protocol   = "udp"
+  #   rule_no    = 202
+  #   action     = "allow"
+  #   cidr_block = var.mgmt_cidr # TODO: specify the Wireguard EC2 instance IP here
+  #   from_port  = 1024
+  #   to_port    = 65535
+  # }
 
   # PostgreSQL and Kafka connections from the app subnet
   ingress {
@@ -157,14 +130,14 @@ resource "aws_network_acl" "data" {
   }
 
   # VPN connections from mgmt (only Postgres!)
-  ingress {
-    protocol   = "tcp"
-    rule_no    = 104
-    action     = "allow"
-    cidr_block = var.mgmt_cidr
-    from_port  = 5432
-    to_port    = 5432
-  }
+  # ingress {
+  #   protocol   = "tcp"
+  #   rule_no    = 104
+  #   action     = "allow"
+  #   cidr_block = var.mgmt_cidr # TODO: specify the Wireguard EC2 instance IP here
+  #   from_port  = 5432
+  #   to_port    = 5432
+  # }
 
   tags = {
     Name = "data"

@@ -27,12 +27,6 @@ variable "public_secondary_cidr" {
   type        = string
 }
 
-
-variable "mgmt_cidr" {
-  description = "CIDR used for the VPN management nodes."
-  type        = string
-}
-
 variable "data_cidr" {
   description = "CIDR used for the data persistence service (Postgres, Kafka)."
   type        = string
@@ -47,7 +41,6 @@ variable "app_secondary_cidr" {
   description = "Secondary subnet CIDR used for the applications."
   type        = string
 }
-
 
 # application
 variable "app_name" {
@@ -84,4 +77,3 @@ variable "grpc_port" {
   description = "The gRPC port for the ECS application/task."
   type        = number
 }
-

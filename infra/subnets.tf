@@ -43,16 +43,6 @@ resource "aws_route_table_association" "public_secondary_rt_assoc_public" {
 }
 
 # private subnets
-# mgmt
-resource "aws_subnet" "mgmt" {
-  vpc_id     = aws_vpc.solution_vpc.id
-  cidr_block = var.mgmt_cidr
-
-  tags = {
-    Name = "${var.environment}-mgmt-subnet"
-  }
-}
-
 # data
 resource "aws_subnet" "data" {
   vpc_id     = aws_vpc.solution_vpc.id
