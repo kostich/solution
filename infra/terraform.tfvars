@@ -18,8 +18,8 @@ public_secondary_cidr = "10.0.251.0/24"
 # database
 aurora_instances      = 3
 aurora_engine_version = "13.8"
-aurora_min_capacity = 0.5
-aurora_max_capacity = 8
+aurora_min_capacity   = 0.5
+aurora_max_capacity   = 8
 
 # app
 app_name      = "test-app"
