@@ -2,21 +2,22 @@
 
 Small test app that returns some data when queried via HTTP.
 
-## How
+## How to use it locally
 
-## Build
+---
+### Build
 
 ```bash
 docker build -t test-app:$(git rev-parse --short HEAD) .
 ```
-
-## Run
+---
+### Run
 
 ```bash
-docker run -d test-app:$(git rev-parse --short HEAD)
+docker run -e HTTP_PORT=80 -p 8080:80 -d test-app:$(git rev-parse --short HEAD)
 ```
-
-## Use
+---
+### Use
 
 ```bash
 curl localhost:8080
