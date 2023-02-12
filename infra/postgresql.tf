@@ -44,8 +44,6 @@ resource "aws_rds_cluster" "aurora" {
   backup_retention_period = 5                                  # TODO: make this configurable from terraform.tfvars
   preferred_backup_window = "07:00-09:00"                      # TODO: make this configurable from terraform.tfvars
 
-  skip_final_snapshot = true # TODO: remove this before sending the assignment
-
   serverlessv2_scaling_configuration {
     max_capacity = var.aurora_max_capacity # TODO: make this configurable from terraform.tfvars
     min_capacity = var.aurora_min_capacity # TODO: make this configurable from terraform.tfvars
