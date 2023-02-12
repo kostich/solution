@@ -18,10 +18,6 @@ The Aurora PostgreSQL database is also automatically scalable.
 
 Resources have corresponding security lists attached that limit access to them. Additionaly, there are Network ACLs configured that further limit how resources in subnets can talk to each other.
 
-The ECS Task hosting the app currently isn't doing the automatic scaling of the app but that's because of the lack of implementation time. It's fairly straightforward to add a couple of cloudwatch metrics and some autoscaling policies that utilize those metrics to upscale or downscale.
-
-A message broker hasn't been implemented but it should be doable to deploy MSK in the same data layer that Aurora PostgreSQL resides and all the traffic should work.
-
 ## How to use it
 
 To deploy the infrastructure, consult the [infra/README.md](./infra/README.md) file.
@@ -62,6 +58,10 @@ In a more real-world situation, we would have multiple environments and the depl
 ## Further improvements
 
 Currently it's very hard to have different environments with this approach (except if you don't mind copy-pasting stuff). To change this, the code should be refactored in Terraform modules. Then we would be able to define different environments that use these modules to deploy a specific environment resources (vpc, subnets, database, ecs cluster).
+
+The ECS Task hosting the app currently isn't doing the automatic scaling of the app but that's because of the lack of implementation time. It's fairly straightforward to add a couple of cloudwatch metrics and some autoscaling policies that utilize those metrics to upscale or downscale.
+
+A message broker hasn't been implemented but it should be doable to deploy MSK in the same data layer that Aurora PostgreSQL resides and all the traffic should work.
 
 ## Who
 Marko Kostic
