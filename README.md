@@ -4,7 +4,7 @@ This repo contains code that will allow you to run a Golang app on AWS.
 
 ## Infrastructure
 
-_diagram goes here_
+![cloud infrastructure](./cloud-architecture.png)
 
 The application lies inside two private subnets (two different AZs). These subnets can connect to the Internet via the two public subnets (that have the corresponding internet gateway and the NAT gateways). Incoming traffic is routed to the application via an Application Load Balancer.
 
