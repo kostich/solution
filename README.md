@@ -26,6 +26,16 @@ A message broker hasn't been implemented but it should be doable to deploy MSK i
 
 To deploy the infrastructure, consult the [infra/README.md](./infra/README.md) file.
 
+## VPN
+
+Due to the lack of time, I've implemented a simple EC2 instance that can be used for SSH TCP port-forwarding, to access the database. When you execute `terraform apply` in the `infra` folder, you'll see the full command that can be used to start the tunnel. After the tunnel is up and running, you can use whatever you like to reach the database on host `127.0.0.1` (for example DBeaver).
+
+To configure who has access to the database via the port-forward, change the `instance_keys` list of strings in the [terraform.tfvars](infra/terraform.tfvars) file. This list should only contain the **public** part of the SSH keys.
+
+Note: the user account used for the port-forward can't be elevated to root.
+
+If I had more time, I would attempt to implement a highly-available Wireguard servers (powered via an AWS Auto Scaling Group that would put EC2 instance in a different AZs and also a domain pointing to both of the instances). Something that's similar to a stack [described here](https://www.perdian.de/blog/2021/12/27/setting-up-a-wireguard-vpn-at-aws-using-terraform/).
+
 ## Monitoring
 
 Due to the lack of time, monitoring isn't implemented. But let's imagine that we use Datadog and PagerDuty. One possible solution to the monitoring would be to:
